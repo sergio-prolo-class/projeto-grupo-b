@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.Random;
 
 public class batalha_Naval {
@@ -13,7 +12,7 @@ public class batalha_Naval {
     static final int[] tamanhoBarco = {5, 4, 3, 3, 2}; 
         // System.out.println(Arrays.toString(tamanhos));
 
-    static final String[] simbolos = {"P", "E", "C", "S", "N"};
+    static final String[] simbolos = {" P", " E", " C", " S", " N"};
         // System.out.println(Arrays.toString(simbolos));
 
     //Posições aleatórias
@@ -48,392 +47,85 @@ public class batalha_Naval {
     static boolean barcoCabe (boolean Vertical, int numL, int numC, int tamanhoBarco) { 
 
         if (Vertical) {
-            //para linha aleatória, a altura da linha é >= espaço necessario pro barco? true or false 
-            boolean barcoCabe = ( (tamanhoTabuleiro - numL) >= (tamanhoTabuleiro - tamanhoBarco)) ? true : false; 
+            //para linha aleatória, a altura da linha tem espaço necessario pro barco no tabuleiro? true or false 
+            boolean barcoCabe = ((numL + tamanhoBarco) <= tamanhoTabuleiro) ? true : false; 
             return barcoCabe;
-          } else {
-            //para coluna aleatória, a posição da coluna é >= espaço necessario pro barco? true or false 
-            boolean barcoCabe = ( ( tamanhoTabuleiro - numC) >= (tamanhoTabuleiro - tamanhoBarco)) ? true : false; 
+        } else {
+            //para coluna aleatória, a posição da coluna tem espaço necessario pro barco no tabuleiro? true or false 
+            boolean barcoCabe = ((numC + tamanhoBarco) <= tamanhoTabuleiro) ? true : false; 
             return barcoCabe;
         }
     }
 
     //////////////////////////////////////para verificar se o tabuleiro está vago//////////////////////////////////////
     
-    static boolean tabuleiroVago (boolean Vertical, int numL, int numC, int tamanhoBarco, int i) {
+    static boolean tabuleiroVago (boolean Vertical, int numL, int numC, int tamanhoBarco) {
 
         if (Vertical) {                                                                        //se vertical verdadeiro,                                  
-            for (i = 0; i < tamanhoBarco; i++) {                                               //enquanto i < tamanho do barco,                   
-                if (tabuleiro[numL + i][numC] != vazio) {                                      //a posição do tabuleiro [random linha + i][coluna fixa] é diferente de vazio? 
-                    boolean tabuleiroVago = false;                                             //tabuleiroVago é falso            
-                    return tabuleiroVago;                                                      //retorne tabuleiroVago
+            for (int i = 0; i < tamanhoBarco; i++) {                                           //enquanto i < tamanho do barco,                   
+                if (!tabuleiro[numL + i][numC].equals(vazio)) {                                //a posição do tabuleiro [random linha + i][coluna fixa] é diferente do conteudo de vazio? 
+                    return false;                                                              //retorne tabuleiroVago
                 } 
             }
         }
         else {                                                                                //senão    
-            for (i = 0; i < tamanhoBarco; i++) {                                              //enquanto i < tamanho do barco,                   
-                if (tabuleiro[numL][numC + i] != vazio) {                                     //a posição do tabuleiro [linha fixa][random coluna + i] é diferente de vazio? 
-                    boolean tabuleiroVago = false;                                            //tabuleiroVago é falso            
-                    return tabuleiroVago;                                                     //retorne tabuleiroVago          
+            for (int i = 0; i < tamanhoBarco; i++) {                                          //enquanto i < tamanho do barco,                   
+                if (!tabuleiro[numL][numC + i].equals(vazio)) {                               //a posição do tabuleiro [random linha + i][coluna fixa] é diferente do conteudo de vazio? 
+                    return false;                                                             //retorne tabuleiroVago          
                 }
             }
         }
         return true;                                                                         //se todas as posições == vazio, retorne true
     }
+    
+    //////////////////////////////////////para plotar e atualizar o tabuleiro//////////////////////////////////////
+    
+    static void colocarBarco(int tamanhoBarco, String simbolo) {
 
+        boolean barcoColocado = false;                           //declara o barco como não colocado, por padrão
+
+        while (!barcoColocado) {                                //enquanto o barco não estiver colocado, continue tentando
+
+            int numL = random.nextInt(tamanhoTabuleiro);        //gera nova linha aleatória, entre 0 e 9
+            int numC = random.nextInt(tamanhoTabuleiro);        //gera nova coluna aleatória, entre 0 e 9
+            boolean vertical = random.nextBoolean();            //gera nova orientação aleatória, vertical ou horizontal
+
+           if (barcoCabe(vertical, numL, numC, tamanhoBarco) &&        //barcoCabe E tabuleiroVago recebem os mesmos argumentos
+                tabuleiroVago(vertical, numL, numC, tamanhoBarco)) {    //de orientação, linha, coluna e tamanho do barco
+
+                for (int i = 0; i < tamanhoBarco; i++) {             //para i = posição, enquanto i < tamanho do barco, i++
+                    if (vertical) {                                  //se vertical for verdadeiro
+                        tabuleiro[numL + i][numC] = simbolo;        //atualize a posição do tabuleiro [linha + i][coluna fixa] com o símbolo do barco
+                    } else {                                        //senão (horizontal)
+                        tabuleiro[numL][numC + i] = simbolo;        //atualize a posição do tabuleiro [linha fixa][coluna + i] com o símbolo do barco
+                    }
+                }
+            barcoColocado = true;                               //barco colocado, fim do while
+            }
+        }
+    }
+
+    //////////////////////////////////////para printar o tabuleiro//////////////////////////////////////
+
+    static void imprimirTabuleiro() {                       
+        for (int l = 0; l < tamanhoTabuleiro; l++) {        //para cada linha = 0 e menor que 10, l++
+            for (int c = 0; c < tamanhoTabuleiro; c++) {    //para cada coluna = 0 e menor que 10, c++
+            System.out.print(tabuleiro[l][c]);              //imprima a posição do tabuleiro [linha][coluna]
+            }
+        System.out.println();                               //pule uma linha após cada linha do tabuleiro
+        }
+    }
     
     //////////////////////////////////////método main//////////////////////////////////////
 
  
     public static void main(String[] args) {
 
-        ///bloco de teste////////////////
-        System.out.printf("linha %d %n", numL); 
-        System.out.printf("coluna %d %n", numC);       
-        System.out.printf("vertical %b %n", Vertical);
+    inicializarTabuleiroVazio();                        //inicializa o tabuleiro vazio
 
-            inicializarTabuleiroVazio();                                //chama o método inicializarTabuleiroVazio para preencher o tabuleiro com " ."
-            barcoCabe(true, numL, numC, 5 );   
-            
-            System.out.println(Arrays.deepToString(tabuleiro));
-
-            System.out.printf("tabuleirovago %b %n", tabuleiroVago(Vertical, numL, numC, 5, 0) );
-
-        }
+    for (int i = 0; i < tamanhoBarco.length; i++) {     //para i = 0; enquanto i < o numero de barcos, i++
+        colocarBarco(tamanhoBarco[i], simbolos[i]);     //coloca o barco no tabuleiro, tamanho e símbolo do barco correspondente
+    }
+    imprimirTabuleiro();                                //imprime o tabuleiro atualizado com os barcos
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-
-    //     if (Vertical) {                                                                             //se vertical == true, 
-    //         while (i  <= (tamanhoBarco)); {                                                          //enquanto i <= tamanho do barco,                                  
-    //             do {                                                                                //faça      
-    //                 boolean tabuleiroVago = (tabuleiro[numL + i][numC] == vazio) ? true : false;    //a posição do tabuleiro [random linha + 1][coluna] é vazio? tabuleiroVago é true or false
-    //                 return tabuleiroVago;
-    //             }
-    //         }
-    //     } else {
-    //         while (i  <= (tamanhoBarco)); { 
-    //             do {
-    //                 boolean tabuleiroVago = (tabuleiro[numL][numC + i] == vazio) ? true : false;
-                    
-    //             }
-    //         i++;                                                                               // desloque para coluna direita, linha fixa
-    //         }
-    //     }
-    // }
-
-    
-
-
-
-
-            
-                                                                                  // desloque para linha debaixo, coluna fixa
-                                                                                                  // repita até o tamanho do barco
-            
-            
-                                                                                            //senão (horizontal)
-                                                                     //enquanto i <= tamanho do barco,                                  
-                                                                                               //faça      
-                        //a posição do tabuleiro [linha][random coluna +
-                                                                                               // desloque para linha debaixo, coluna fixa
-                                                                                                   // repita até o tamanho do barco
-                                                                               // desloque para coluna direita, linha fixa
-        
-    
-
-
-        //     //para coluna aleatória, enquanto linha aleatória for menor que o tamanho do barco, essas linhas = vazio? true or false 
-        //     for (int c = numC; ( i < (numL + tamanhoBarco)); i++) {
-        //         boolean vertucalLivre = tabuleiro[i][numC] == vazio? true : false;
-        //     }
-        //     return vertucalLivre;
-        //     }
-        // else {
-        //     //para linha aleatória, o intervalo de colunas de espaço necessario pro barco = vazio? true or false 
-        //         for (int numL = randomNum; ( i < (numC + tamanhoBarco)); i++) {
-        //         boolean espaçoVazioHorizontal = tabuleiro[numL][i] == vazio? true : false;
-        //         return espaçoVazioHorizontal;
-    
-
-        
-
-//          public static boolean TabuleiroVazio (boolean Vertical, int randomNum, int tamanhoBarco, int i) {
-
-//           //////////////////////////////////////verificando se a peça cabe//////////////////////////////////////
-
-//           if (Vertical == true) {
-//             //para coluna aleatória, o intervalo de linhas de espaço necessario pro barco = vazio? true or false 
-//             for (int numC = randomNum; ( i < (numL + tamanhoBarco)); i++) {
-//                 boolean espaçoVazioVertical = tabuleiro[i][numC] == vazio? true : false;
-//                 return espaçoVazioVertical;
-//             }
-//         else {
-//             //para linha aleatória, o intervalo de colunas de espaço necessario pro barco = vazio? true or false 
-//                 for (int numL = randomNum; ( i < (numC + tamanhoBarco)); i++) {
-//                 boolean espaçoVazioHorizontal = tabuleiro[numL][i] == vazio? true : false;
-//                 return espaçoVazioHorizontal;
-//             }
-            
-            
-
-
-
-
-
-
-
-
-//             boolean verticalLivre = (randomNum >= (10 - tamanhoBarco)) ? true : false;
-
-
-//             return verticalLivre;
-//           } else {
-//             //para coluna aleatória, a posição da coluna é >= espaço necessario pro barco? true or false 
-//             boolean cabeHorizontal = (randomNum >= (10 - tamanhoBarco)) ? true : false; 
-//             return cabeHorizontal;
-//           }
-    
-//           //para barco, se barco <= quantidade de barcos, barco++
-//             for (int barco = 0; barco < tamanhos.length; barco ++) {
-
-//             //para linha aleatória, a altura da linha é >= espaço necessario pro barco? true or false 
-//             boolean cabeVertical = (numL >= (10 - tamanhos[barco])) ? true : false; 
-
-//             //para coluna aleatória, a posição da coluna é >= espaço necessario pro barco? true or false 
-//             boolean cabeHorizontal = (numC >= (10 - tamanhos[barco])) ? true : false; 
-
-
-        
-
-
-//         // //Posição
-//         // Random random = new Random();
-//         // int numL = random.nextInt(10);
-//         // int numC = random.nextInt(10);
-//         // // System.out.println(posiçãoL);
-//         // // System.out.println(posiçãoC);
-
-
-//         //verificando se cabe//////////////////////////////////////
-
-//         //para barco, se barco <= quantidade de barcos, barco++
-//         for (int barco = 0; barco < tamanhos.length; barco ++) {
-
-//             //para linha aleatória, a altura da linha é >= espaço necessario pro barco? true or false 
-//             boolean cabeVertical = (numL >= (10 - tamanhos[barco])) ? true : false; 
-
-//             //para coluna aleatória, a posição da coluna é >= espaço necessario pro barco? true or false 
-//             boolean cabeHorizontal = (numC >= (10 - tamanhos[barco])) ? true : false; 
-
-
-//         //verificando se está vazio/////////////////////////////
-
-//         //para simbolo, se simbolos <= tamanho do barco, simbolo++
-//         for (int simbolo = 0; simbolo < tamanhos.length; simbolo ++) {
-//             //vertical 
-
-//             for ( int i = 0; i < tamanhos[i]; i++)
-
-
-
-//             boolean livre = ((tabuleiro[numL + i][numC] == vazio) ? true : false) ;
-
-
-
-
-//             while (simbolo <= tamanhos[simbolo]) {
-//                 do {
-//                     //verifica se a posição do tabuleiro está vazia
-//                     boolean espaçoVazioVertical = (tabuleiro[numL][numC] == vazio) ? true : false;
-//                 if (tabuleiro[numL][numC] != vazio) {  
-
-            
-        
-
-
-
-
-//             //enquanto simbolo <= tamanho do barco correspondente, faça
-//             while (simbolo <= tamanhos[simbolo]) {
-//                 do {
-//                     //verifica se a posição do tabuleiro está vazia
-//                     boolean espaçoVazioVertical = (tabuleiro[numL][numC] == vazio) ? true : false;
-
-//                 }             
-//             }
-
-//             boolean espaçoVazio = (tabuleiro[numL][numC] == vazio) ? true : false;
-
-
-
-
-//             //para linha aleatória, a altura da linha é >= espaço necessario pro barco? true or false 
-//             boolean cabeVertical = (numL >= (10 - tamanhos[barco])) ? true : false; 
-
-//             //para coluna aleatória, a posição da coluna é >= espaço necessario pro barco? true or false 
-//             boolean cabeHorizontal = (numC >= (10 - tamanhos[barco])) ? true : false; 
-            
-
-//         //colocando peças
-
-//         //para barco, se barco <= quantidade de barcos, barco++
-//         for ( int barco = 0; barco <= tamanhos.length; barco ++) {
-
-
-
-
-
-//             //para linha aleatória, se numero da linha >= (tamanho tabuleiro - tamanho do barco), linha++
-//             for (int l = numL; cabeVertical == true ; l++) {
-
-//                 // para cada coluna aleatória, se a linha e coluna forem vazias, print simbolo do barco, c++
-//                 for (int c = numC; (tabuleiro[l][c] == vazio) ; c = numC) {
-//                     System.out.printf("simbolos[barco]");            
-//                 }
-//             }
-
-            
-//             (( l = numL) >= (10 - tamanhos[barco])) ?
-
-        
-
-
-
-//             //     // para cada coluna aleatória, enquanto linha <= ao tamanho do barco, print simbolo do barco, l++
-//             //    for (int c = numC; (l >= numL + tamanhos[0]); l++); {
-
-//             // System.out.printf("simbolos[0]");
-//             // }
-
-//         }
-//         } 
-//     }
-
-
-//         //      {
-//         //         l = l
-//         //     } ; l++) {
-//         //         System.out.printf("simbolos[0]");
-//         //     }
-//         // }
-
-//         //         for (int l = posiçãoC; (posiçãoC < tamanhos[0]); c++) {
-
-//         //             for (int l = 0; l < P2.length; l++) {
-//         //     for (int c = 0; c < P2.length; c++) {
-//         //         System.out.printf("P");
-
-
-
-//         //         for (int C = posiçãoC; (posiçãoL < tamanhos[0]); l++) {
-
-
-
-
-
-//         //     System.out.printf("simbolos[0]");
-//         //      }
-//         //     }
-
-        
-//     // static void gerarTabuleiro() {
-//     //     for (int i = 0; i < tamanhos.length; i++) {
-//     //         int tamanho = tamanhos[i];
-//     //         char simbolo = simbolos[i];
-
-
-
-        
-        
-//     //    System.out.println(Arrays.toString(tamanhos));
-
-//     //    System.out.println(Arrays.toString(simbolos));
-
- 
-
-
-
-
-
-
-
-
-
-    
-        
-            
-// //  int[] P1 = new int [5];
-// //          for (int l = 0; l  < P1.length; l++) {
-// //                 System.out.printf(" P");
-// //             System.out.println(P1);
-// //         }
-
-// //          int[] P2 = new int [5];
-// //          for (int c = 0; c  < P2.length; c++) {
-// //                 System.out.printf(" A");
-// //             System.out.print(P2);
-// //         }
-
-
-
-//         //  int[][] P2 = new int [1][5];
-//         //  for (int l = 0; l < P2.length; l++) {
-//         //     for (int c = 0; c < P2.length; c++) {
-//         //         System.out.printf("P");
-//         //     }
-//         // }
-        
-//         // int[][] E1 = new int [4][1];
-//         // int[][] E2 = new int [1][4];
-
-//         // int[][] C1 = new int [3][1];
-//         // int[][] C2 = new int [1][3];
-
-//         // int[][] S1 = new int [3][1];
-//         // int[][] S2 = new int [1][3];
-
-//         // int[][] N1 = new int [2][1];
-//         // int[][] N2 = new int [1][2];
-
-
-//         // while (linhas < 10) {
-//         //     while (colunas < 10) {
-//         //         System.out.printf(" .");
-//         //         colunas++;
-//         //     }
-//         //     linhas ++ ;
-//         //     colunas = 0 ;
-//         //     System.out.println();
-
-//         // }
-    
-
-
-
-
-
-
-
