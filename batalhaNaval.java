@@ -5,7 +5,6 @@ import java.util.Scanner;
 public class batalhaNaval {
 
     // criando variáveis estáticas, de acesso global da classe
-
     static final int tamanhoTabuleiro = 10;
     static final String vazio = " .";
 
@@ -26,7 +25,6 @@ public class batalhaNaval {
     // System.out.println(posiçãoL); 
     // System.out.println(posiçãoC);
     // System.out.println(Vertical);
-
     //Arranjo do tabuleiro como varável estática, para ser atualizado por todos os métodos
     static String[][] tabuleiro = new String[tamanhoTabuleiro][tamanhoTabuleiro];
 
@@ -171,9 +169,9 @@ public class batalhaNaval {
      * Valida se o tabuleiro contém apenas símbolos permitidos pelo enunciado:
      * P, E, C, S, N ou .
      *
-     * @return true se todos os símbolos forem válidos; false se encontrar algum inválido
+     * @return true se todos os símbolos forem válidos; false se encontrar algum
+     * inválido
      */
-
     static boolean validarSimbolos() {
         for (int l = 0; l < tamanhoTabuleiro; l++) {
             for (int c = 0; c < tamanhoTabuleiro; c++) {
@@ -194,21 +192,21 @@ public class batalhaNaval {
     }
 
     /**
-     * Valida um navio específico (por símbolo) verificando:
-     * 1) Se ele existe no tabuleiro
-     * 2) Se ocupa exatamente o tamanho esperado
-     * 3) Se forma uma sequência contínua horizontal OU vertical (não pode ser quebrado)
+     * Valida um navio específico (por símbolo) verificando: 1) Se ele existe no
+     * tabuleiro 2) Se ocupa exatamente o tamanho esperado 3) Se forma uma
+     * sequência contínua horizontal OU vertical (não pode ser quebrado)
      *
-     * Estratégia:
-     * - Cria uma matriz booleana marcando onde o símbolo aparece
-     * - Conta quantas ocorrências existem (deve bater com tamanhoEsperado)
-     * - Procura uma sequência contínua do tamanhoEsperado em alguma linha (horizontal)
-     * - Procura uma sequência contínua do tamanhoEsperado em alguma coluna (vertical)
-     * - Deve ser exatamente um dos dois (horizontal XOR vertical)
+     * Estratégia: - Cria uma matriz booleana marcando onde o símbolo aparece -
+     * Conta quantas ocorrências existem (deve bater com tamanhoEsperado) -
+     * Procura uma sequência contínua do tamanhoEsperado em alguma linha
+     * (horizontal) - Procura uma sequência contínua do tamanhoEsperado em
+     * alguma coluna (vertical) - Deve ser exatamente um dos dois (horizontal
+     * XOR vertical)
      *
      * @param simbolo símbolo do navio (ex.: "P")
      * @param tamanhoEsperado tamanho do navio conforme enunciado (ex.: 5)
-     * @return true se o navio estiver válido; false se estiver ausente, com tamanho errado ou formato incorreto
+     * @return true se o navio estiver válido; false se estiver ausente, com
+     * tamanho errado ou formato incorreto
      */
     static boolean validarFormatoNavio(String simbolo, int tamanhoEsperado) {
         int count = 0;
@@ -243,8 +241,11 @@ public class batalhaNaval {
         for (int l = 0; l < 10; l++) {
             int seq = 0; // contador de sequência na linha atual
             for (int c = 0; c < 10; c++) {
-                if (pos[l][c]) seq++;
-                else seq = 0;
+                if (pos[l][c]) {
+                    seq++; 
+                }else {
+                    seq = 0;
+                }
 
                 // Achou uma sequência contínua do tamanho correto
                 if (seq == tamanhoEsperado) {
@@ -258,8 +259,11 @@ public class batalhaNaval {
         for (int c = 0; c < 10; c++) {
             int seq = 0; // contador de sequência na coluna atual
             for (int l = 0; l < 10; l++) {
-                if (pos[l][c]) seq++;
-                else seq = 0;
+                if (pos[l][c]) {
+                    seq++; 
+                }else {
+                    seq = 0;
+                }
 
                 // Achou uma sequência contínua do tamanho correto
                 if (seq == tamanhoEsperado) {
@@ -278,7 +282,36 @@ public class batalhaNaval {
         return true;
     }
 
+    /**
+     * Controla a validação completa dos navios exigidos: - Deve existir
+     * exatamente 1 navio de cada tipo (P, E, C, S, N) - Cada navio deve ocupar
+     * exatamente o número correto de casas - Cada navio deve estar inteiramente
+     * na horizontal OU inteiramente na vertical - Não pode existir formato
+     * “quebrado” (ex: em L, separado, etc)
+     *
+     * @return true se todos os navios estiverem corretos; false caso contrário
+     */
+    static boolean validarNavios() {
+        // Para cada tipo de navio, valida quantidade e formato
+        if (!validarFormatoNavio("P", 5)) {
+            return false;
+        }
+        if (!validarFormatoNavio("E", 4)) {
+            return false;
+        }
+        if (!validarFormatoNavio("C", 3)) {
+            return false;
+        }
+        if (!validarFormatoNavio("S", 3)) {
+            return false;
+        }
+        if (!validarFormatoNavio("N", 2)) {
+            return false;
+        }
 
+        // Se todos passaram, o conjunto de navios está correto
+        return true;
+    }
 
     //////////////////////////////////////MÉTODO MAIN//////////////////////////////////////
 
@@ -300,24 +333,40 @@ public class batalhaNaval {
 // }
 
     public static void main(String[] args) {
+
+        // Validação do argumento obrigatório (G ou V)
         if (args.length == 0) {
-            System.out.println("Uso: java BatalhaNaval G | V");
+            System.out.println("Uso: java batalhaNaval G | V");
             return;
         }
 
         if (args[0].equals("G")) {
+
+            // (modo G já pronto - manter o fluxo)
             inicializarTabuleiroVazio();
+
             for (int i = 0; i < tamanhoBarco.length; i++) {
-                colocarBarco(tamanhoBarco[i], simbolos[i]);
+                // colocarBarco(tamanhoBarco[i], simbolos[i]);
             }
+
             imprimirTabuleiro();
 
         } else if (args[0].equals("V")) {
-            inicializarTabuleiroVazio();
-            // lerTabuleiro();
-            // validarTabuleiro();
+
+            // 1) Dimensões e formato de entrada
+            if (!lerTabuleiro()) return;
+
+            // 2) Símbolos aceitos
+            if (!validarSimbolos()) return;
+
+            // 3) Regras dos navios (quantidade, tamanho e alinhamento)
+            if (!validarNavios()) return;
+
+            // Se passou por todas as regras, tabuleiro está correto
+            System.out.println("Tabuleiro válido");
 
         } else {
+            // Tratamento de argumento inválido
             System.out.println("Modo inválido. Use G ou V.");
         }
     }
