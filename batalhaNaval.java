@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class batalhaNaval {
 
-    ///////////////////criando variáveis estáticas, de acesso global da classe
+    // criando variáveis estáticas, de acesso global da classe
 
     static final int tamanhoTabuleiro = 10;
     static final String vazio = " .";
@@ -18,6 +18,7 @@ public class batalhaNaval {
 
     // //Posições aleatórias
     static Random random = new Random();
+
     // // static int randomNum = random.nextInt(10);          //número aleatório entre 0 e 9
     // static int numL = random.nextInt(10);                  //numero aleatório entre 0 e 9 para linha
     // static int numC = random.nextInt(10);                  //numero aleatório entre 0 e 9 para coluna
@@ -138,7 +139,7 @@ public class batalhaNaval {
      * - Deve haver exatamente 10 linhas
      * - Cada linha deve ter exatamente 10 elementos separados por espaço*/
 
-    public static boolean lerTabuleiro() {
+    static boolean lerTabuleiro() {
         Scanner sc = new Scanner(System.in);
 
         for (int l = 0; l < tamanhoTabuleiro; l++) {
@@ -173,7 +174,7 @@ public class batalhaNaval {
      * @return true se todos os símbolos forem válidos; false se encontrar algum inválido
      */
 
-    public static boolean validarSimbolos() {
+    static boolean validarSimbolos() {
         for (int l = 0; l < tamanhoTabuleiro; l++) {
             for (int c = 0; c < tamanhoTabuleiro; c++) {
 
@@ -191,6 +192,92 @@ public class batalhaNaval {
         }
         return true;
     }
+
+    /**
+     * Valida um navio específico (por símbolo) verificando:
+     * 1) Se ele existe no tabuleiro
+     * 2) Se ocupa exatamente o tamanho esperado
+     * 3) Se forma uma sequência contínua horizontal OU vertical (não pode ser quebrado)
+     *
+     * Estratégia:
+     * - Cria uma matriz booleana marcando onde o símbolo aparece
+     * - Conta quantas ocorrências existem (deve bater com tamanhoEsperado)
+     * - Procura uma sequência contínua do tamanhoEsperado em alguma linha (horizontal)
+     * - Procura uma sequência contínua do tamanhoEsperado em alguma coluna (vertical)
+     * - Deve ser exatamente um dos dois (horizontal XOR vertical)
+     *
+     * @param simbolo símbolo do navio (ex.: "P")
+     * @param tamanhoEsperado tamanho do navio conforme enunciado (ex.: 5)
+     * @return true se o navio estiver válido; false se estiver ausente, com tamanho errado ou formato incorreto
+     */
+    static boolean validarFormatoNavio(String simbolo, int tamanhoEsperado) {
+        int count = 0;
+
+        // Matriz auxiliar para “marcar” as posições ocupadas por esse navio
+        boolean[][] pos = new boolean[10][10];
+
+        // Varre o tabuleiro para localizar e contar as peças do navio
+        for (int l = 0; l < 10; l++) {
+            for (int c = 0; c < 10; c++) {
+                if (tabuleiro[l][c].equals(simbolo)) {
+                    pos[l][c] = true;
+                    count++;
+                }
+            }
+        }
+
+        // Se não apareceu nenhuma vez, está faltando esse navio
+        if (count == 0) {
+            System.out.println("Tabuleiro inválido: navio ausente (" + simbolo + ")");
+            return false;
+        }
+
+        // Se apareceu mais/menos do que deveria, o tamanho do navio está incorreto
+        if (count != tamanhoEsperado) {
+            System.out.println("Tabuleiro inválido: quantidade incorreta de navio " + simbolo);
+            return false;
+        }
+
+        // Verifica se existe uma sequência contínua horizontal do tamanho esperado
+        boolean horizontal = false;
+        for (int l = 0; l < 10; l++) {
+            int seq = 0; // contador de sequência na linha atual
+            for (int c = 0; c < 10; c++) {
+                if (pos[l][c]) seq++;
+                else seq = 0;
+
+                // Achou uma sequência contínua do tamanho correto
+                if (seq == tamanhoEsperado) {
+                    horizontal = true;
+                }
+            }
+        }
+
+        // Verifica se existe uma sequência contínua vertical do tamanho esperado
+        boolean vertical = false;
+        for (int c = 0; c < 10; c++) {
+            int seq = 0; // contador de sequência na coluna atual
+            for (int l = 0; l < 10; l++) {
+                if (pos[l][c]) seq++;
+                else seq = 0;
+
+                // Achou uma sequência contínua do tamanho correto
+                if (seq == tamanhoEsperado) {
+                    vertical = true;
+                }
+            }
+        }
+
+        // O navio deve ser exatamente horizontal OU vertical.
+        // Se der true nos dois (cruz) ou false nos dois (quebrado/separado), é inválido.
+        if (horizontal == vertical) {
+            System.out.println("Tabuleiro inválido: formato incorreto do navio " + simbolo);
+            return false;
+        }
+
+        return true;
+    }
+
 
 
     //////////////////////////////////////MÉTODO MAIN//////////////////////////////////////
@@ -211,11 +298,6 @@ public class batalhaNaval {
 //     imprimirTabuleiro();                                //imprime o tabuleiro atualizado com os barcos
 //     }
 // }
-
-
-
-
-
 
     public static void main(String[] args) {
         if (args.length == 0) {
