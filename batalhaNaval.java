@@ -203,10 +203,10 @@ public class batalhaNaval {
      * alguma coluna (vertical) - Deve ser exatamente um dos dois (horizontal
      * XOR vertical)
      *
-     * @param simbolo símbolo do navio (ex.: "P")
-     * @param tamanhoEsperado tamanho do navio conforme enunciado (ex.: 5)
+     * @param simbolo símbolo do navio (ex: "P")
+     * @param tamanhoEsperado tamanho do navio conforme enunciado (ex: 5)
      * @return true se o navio estiver válido; false se estiver ausente, com
-     * tamanho errado ou formato incorreto
+     * tamanho errado ou formato incorretoo
      */
     static boolean validarFormatoNavio(String simbolo, int tamanhoEsperado) {
         int count = 0;
@@ -243,7 +243,7 @@ public class batalhaNaval {
             for (int c = 0; c < 10; c++) {
                 if (pos[l][c]) {
                     seq++; 
-                }else {
+                } else {
                     seq = 0;
                 }
 
@@ -261,7 +261,7 @@ public class batalhaNaval {
             for (int l = 0; l < 10; l++) {
                 if (pos[l][c]) {
                     seq++; 
-                }else {
+                } else {
                     seq = 0;
                 }
 
