@@ -159,11 +159,39 @@ public class batalhaNaval {
                 tabuleiro[l][c] = partes[c];
             }
 
-            sc.close();
         }
+
+        sc.close();
 
         return true;
     }
+
+    /**
+     * Valida se o tabuleiro contém apenas símbolos permitidos pelo enunciado:
+     * P, E, C, S, N ou .
+     *
+     * @return true se todos os símbolos forem válidos; false se encontrar algum inválido
+     */
+
+    public static boolean validarSimbolos() {
+        for (int l = 0; l < tamanhoTabuleiro; l++) {
+            for (int c = 0; c < tamanhoTabuleiro; c++) {
+
+                String s = tabuleiro[l][c];
+
+                // Condição direta: se não for nenhum símbolo aceito, é erro
+                if (!s.equals("P") && !s.equals("E") && !s.equals("C")
+                        && !s.equals("S") && !s.equals("N") && !s.equals(".")) {
+
+                    // Mensagem no estilo do exemplo do enunciado
+                    System.out.println("Tabuleiro inválido: navio desconhecido, representado pela letra " + s);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
     //////////////////////////////////////MÉTODO MAIN//////////////////////////////////////
 
