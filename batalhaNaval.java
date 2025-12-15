@@ -2,7 +2,6 @@ import java.util.Random;
 
 public class batalhaNaval {
 
-
     ///////////////////criando variáveis estáticas, de acesso global da classe
 
     static final int tamanhoTabuleiro = 10;
@@ -18,9 +17,9 @@ public class batalhaNaval {
     // //Posições aleatórias
     static Random random = new Random();
     // // static int randomNum = random.nextInt(10);          //número aleatório entre 0 e 9
-    // static int numL = random.nextInt(10);           //numero aleatório entre 0 e 9 para linha
-    // static int numC = random.nextInt(10);           //numero aleatório entre 0 e 9 para coluna
-    // static boolean Vertical = random.nextBoolean();       //booleano aleatório para orientação do barco
+    // static int numL = random.nextInt(10);                  //numero aleatório entre 0 e 9 para linha
+    // static int numC = random.nextInt(10);                  //numero aleatório entre 0 e 9 para coluna
+    // static boolean Vertical = random.nextBoolean();        //booleano aleatório para orientação do barco
         // System.out.println(posiçãoL); 
         // System.out.println(posiçãoC);
         // System.out.println(Vertical);
@@ -28,7 +27,6 @@ public class batalhaNaval {
     //Arranjo do tabuleiro como varável estática, para ser atualizado por todos os métodos
     static String[][] tabuleiro = new String[tamanhoTabuleiro][tamanhoTabuleiro]; 
 
-    
     ////////////////////////////////////////////////MÉTODOS ESTÁTICOS COMUNS////////////////////////////////////////////////
         
     //////////////////////////////////////para inicializar o tabuleiro vazio//////////////////////////////////////
@@ -42,18 +40,6 @@ public class batalhaNaval {
         }
     }
 
-    //////////////////////////////////////para printar o tabuleiro//////////////////////////////////////
-
-    static void imprimirTabuleiro() {                       
-        for (int l = 0; l < tamanhoTabuleiro; l++) {        //para cada linha = 0 e menor que 10, l++
-            for (int c = 0; c < tamanhoTabuleiro; c++) {    //para cada coluna = 0 e menor que 10, c++
-            System.out.print(tabuleiro[l][c]);              //imprima a posição do tabuleiro [linha][coluna]
-            }
-        System.out.println();                               //pule uma linha após cada linha do tabuleiro
-        }
-    }
-    
-    
     //////////////////////////////////////MÉTODOS ESTÁTICOS PARA GERAÇÃO DE TABULEIRO//////////////////////////////////////
     
     //////////////////////////////////////para verificar se a peça cabe no tabuleiro//////////////////////////////////////
@@ -119,6 +105,17 @@ public class batalhaNaval {
         }
     }
 
+    //////////////////////////////////////para printar o tabuleiro//////////////////////////////////////
+
+    static void imprimirTabuleiro() {                       
+        for (int l = 0; l < tamanhoTabuleiro; l++) {        //para cada linha = 0 e menor que 10, l++
+            for (int c = 0; c < tamanhoTabuleiro; c++) {    //para cada coluna = 0 e menor que 10, c++
+            System.out.print(tabuleiro[l][c]);              //imprima a posição do tabuleiro [linha][coluna]
+            }
+        System.out.println();                               //pule uma linha após cada linha do tabuleiro
+        }
+    }
+    
     //////////////////////////////////////MÉTODOS ESTÁTICOS PARA VALIDAÇÃO DE TABULEIRO//////////////////////////////////////
     
     
@@ -145,25 +142,26 @@ public class batalhaNaval {
 
 
     public static void main(String[] args) {
-
-        if (args[0].equals("G")) {                      //se o (primeiro) argumento recebido (posição 0) for igual a "G
-
-            inicializarTabuleiroVazio();                         //inicializa o tabuleiro vazio
-
-            for (int i = 0; i < tamanhoBarco.length; i++) {     //para i = 0; enquanto i < o numero de barcos, i++
-            colocarBarco(tamanhoBarco[i], simbolos[i]);     //coloca o barco no tabuleiro, tamanho e símbolo do barco correspondente
-            }
-
-            imprimirTabuleiro();                                //imprime o tabuleiro atualizado com os barcos
-
-        } else if (args[0].equals("V")) {             //senão if, o (primeiro) argumento recebido (posição 0) for igual a "V"
-
-            inicializarTabuleiroVazio();                        // inicializa o tabuleiro vazio
-            // lerTabuleiro();          // entrada
-            // validarTabuleiro();      // validação
-
-        } else {
-            System.out.println("Modo inválido. Use G ou V.");   //mensagem de erro para argumentos inválidos
-        }
+    if (args.length == 0) {
+        System.out.println("Uso: java BatalhaNaval G | V");
+        return;
     }
+
+    if (args[0].equals("G")) {
+        inicializarTabuleiroVazio();
+        for (int i = 0; i < tamanhoBarco.length; i++) {
+            colocarBarco(tamanhoBarco[i], simbolos[i]);
+        }
+        imprimirTabuleiro();
+
+    } else if (args[0].equals("V")) {
+        inicializarTabuleiroVazio();
+        // lerTabuleiro();
+        // validarTabuleiro();
+
+    } else {
+        System.out.println("Modo inválido. Use G ou V.");
+    }
+}
+
 }
