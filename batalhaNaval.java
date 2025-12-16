@@ -6,13 +6,13 @@ public class batalhaNaval {
 
     // criando variáveis estáticas, de acesso global da classe
     static final int tamanhoTabuleiro = 10;
-    static final String vazio = " .";
+    static final String vazio = ".";
 
     //Arranjos dos navios
     static final int[] tamanhoBarco = {5, 4, 3, 3, 2};
     // System.out.println(Arrays.toString(tamanhos));
 
-    static final String[] simbolos = {" P", " E", " C", " S", " N"};
+    static final String[] simbolos = {"P", "E", "C", "S", "N"};
     // System.out.println(Arrays.toString(simbolos));
 
     // //Posições aleatórias
@@ -117,7 +117,7 @@ public class batalhaNaval {
     static void imprimirTabuleiro() {
         for (int l = 0; l < tamanhoTabuleiro; l++) {        //para cada linha = 0 e menor que 10, l++
             for (int c = 0; c < tamanhoTabuleiro; c++) {    //para cada coluna = 0 e menor que 10, c++
-                System.out.print(tabuleiro[l][c]);              //imprima a posição do tabuleiro [linha][coluna]
+                System.out.print(tabuleiro[l][c] + " ");              //imprima a posição do tabuleiro [linha][coluna]
             }
             System.out.println();                               //pule uma linha após cada linha do tabuleiro
         }
@@ -142,7 +142,7 @@ public class batalhaNaval {
 
         for (int l = 0; l < tamanhoTabuleiro; l++) {
             if (!sc.hasNextLine()) {
-                System.out.println("Tabuleiro inválido: dimensões incorretas");
+                System.out.println("INVÁLIDO (dimensões incorretas)");
                 return false;
             }
 
@@ -150,7 +150,7 @@ public class batalhaNaval {
             String[] partes = linha.split(" ");
 
             if (partes.length != tamanhoTabuleiro) {
-                System.out.println("Tabuleiro inválido: dimensões incorretas");
+                System.out.println("INVÁLIDO (dimensões incorretas)");
                 return false;
             }
 
@@ -159,8 +159,6 @@ public class batalhaNaval {
             }
 
         }
-
-        sc.close();
 
         return true;
     }
@@ -183,7 +181,7 @@ public class batalhaNaval {
                         && !s.equals("S") && !s.equals("N") && !s.equals(".")) {
 
                     // Mensagem no estilo do exemplo do enunciado
-                    System.out.println("Tabuleiro inválido: navio desconhecido, representado pela letra " + s);
+                    System.out.println("INVÁLIDO (navio desconhecido)");
                     return false;
                 }
             }
@@ -209,12 +207,9 @@ public class batalhaNaval {
      * tamanho errado ou formato incorretoo
      */
     static boolean validarFormatoNavio(String simbolo, int tamanhoEsperado) {
+        boolean[][] pos = new boolean[10][10];
         int count = 0;
 
-        // Matriz auxiliar para “marcar” as posições ocupadas por esse navio
-        boolean[][] pos = new boolean[10][10];
-
-        // Varre o tabuleiro para localizar e contar as peças do navio
         for (int l = 0; l < 10; l++) {
             for (int c = 0; c < 10; c++) {
                 if (tabuleiro[l][c].equals(simbolo)) {
@@ -224,58 +219,73 @@ public class batalhaNaval {
             }
         }
 
-        // Se não apareceu nenhuma vez, está faltando esse navio
+        // 1) navio faltando
         if (count == 0) {
-            System.out.println("Tabuleiro inválido: navio ausente (" + simbolo + ")");
+            System.out.println("INVÁLIDO (navio faltando)");
             return false;
         }
 
-        // Se apareceu mais/menos do que deveria, o tamanho do navio está incorreto
-        if (count != tamanhoEsperado) {
-            System.out.println("Tabuleiro inválido: quantidade incorreta de navio " + simbolo);
-            return false;
+        // 2) navio na diagonal
+        for (int l = 0; l < 9; l++) {
+            for (int c = 0; c < 9; c++) {
+                if ((pos[l][c] && pos[l + 1][c + 1])
+                        || (pos[l + 1][c] && pos[l][c + 1])) {
+                    System.out.println("INVÁLIDO (navio na diagonal)");
+                    return false;
+                }
+            }
         }
 
-        // Verifica se existe uma sequência contínua horizontal do tamanho esperado
-        boolean horizontal = false;
+        // 3) múltiplos navios do mesmo tipo
+        int grupos = 0;
         for (int l = 0; l < 10; l++) {
-            int seq = 0; // contador de sequência na linha atual
             for (int c = 0; c < 10; c++) {
                 if (pos[l][c]) {
-                    seq++; 
-                } else {
-                    seq = 0;
+                    boolean inicio = true;
+                    if (l > 0 && pos[l - 1][c]) {
+                        inicio = false;
+                    }
+                    if (c > 0 && pos[l][c - 1]) {
+                        inicio = false;
+                    }
+                    if (inicio) {
+                        grupos++;
+                    }
                 }
+            }
+        }
 
-                // Achou uma sequência contínua do tamanho correto
-                if (seq == tamanhoEsperado) {
+        if (grupos > 1) {
+            System.out.println("INVÁLIDO (múltiplos navios do mesmo tipo)");
+            return false;
+        }
+
+        // 4) verificar se forma linha ou coluna contínua
+        boolean horizontal = false, vertical = false;
+
+        for (int l = 0; l < 10; l++) {
+            int seq = 0;
+            for (int c = 0; c < 10; c++) {
+                seq = pos[l][c] ? seq + 1 : 0;
+                if (seq == count) {
                     horizontal = true;
                 }
             }
         }
 
-        // Verifica se existe uma sequência contínua vertical do tamanho esperado
-        boolean vertical = false;
         for (int c = 0; c < 10; c++) {
-            int seq = 0; // contador de sequência na coluna atual
+            int seq = 0;
             for (int l = 0; l < 10; l++) {
-                if (pos[l][c]) {
-                    seq++; 
-                } else {
-                    seq = 0;
-                }
-
-                // Achou uma sequência contínua do tamanho correto
-                if (seq == tamanhoEsperado) {
+                seq = pos[l][c] ? seq + 1 : 0;
+                if (seq == count) {
                     vertical = true;
                 }
             }
         }
 
-        // O navio deve ser exatamente horizontal OU vertical.
-        // Se der true nos dois (cruz) ou false nos dois (quebrado/separado), é inválido.
-        if (horizontal == vertical) {
-            System.out.println("Tabuleiro inválido: formato incorreto do navio " + simbolo);
+        // 5) qualquer coisa que não seja linha OU coluna é sobreposição
+        if (!(horizontal ^ vertical)) {
+            System.out.println("INVÁLIDO (sobreposição de navios)");
             return false;
         }
 
@@ -334,41 +344,41 @@ public class batalhaNaval {
 
     public static void main(String[] args) {
 
-        // Validação do argumento obrigatório (G ou V)
         if (args.length == 0) {
-            System.out.println("Uso: java batalhaNaval G | V");
+            System.out.println("Uso: java BatalhaNaval G | V");
             return;
         }
 
         if (args[0].equals("G")) {
-
-            // (modo G já pronto - manter o fluxo)
             inicializarTabuleiroVazio();
-
             for (int i = 0; i < tamanhoBarco.length; i++) {
-                // colocarBarco(tamanhoBarco[i], simbolos[i]);
+                colocarBarco(tamanhoBarco[i], simbolos[i]);
             }
-
             imprimirTabuleiro();
 
         } else if (args[0].equals("V")) {
+            inicializarTabuleiroVazio();
 
-            // 1) Dimensões e formato de entrada
-            if (!lerTabuleiro()) return;
+            if (!lerTabuleiro()) {
+                return;
+            }
 
-            // 2) Símbolos aceitos
-            if (!validarSimbolos()) return;
+            if (!validarSimbolos()) {
+                return;
+            }
 
-            // 3) Regras dos navios (quantidade, tamanho e alinhamento)
-            if (!validarNavios()) return;
+            if (!validarNavios()) {
+                return;
+            }
 
-            // Se passou por todas as regras, tabuleiro está correto
-            System.out.println("Tabuleiro válido");
+            System.out.println("VÁLIDO");
 
+            // lerTabuleiro();
+            // validarTabuleiro();
         } else {
-            // Tratamento de argumento inválido
             System.out.println("Modo inválido. Use G ou V.");
         }
+
     }
 
 }
