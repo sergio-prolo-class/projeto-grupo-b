@@ -236,31 +236,7 @@ public class batalhaNaval {
             }
         }
 
-        // 3) múltiplos navios do mesmo tipo
-        int grupos = 0;
-        for (int l = 0; l < 10; l++) {
-            for (int c = 0; c < 10; c++) {
-                if (pos[l][c]) {
-                    boolean inicio = true;
-                    if (l > 0 && pos[l - 1][c]) {
-                        inicio = false;
-                    }
-                    if (c > 0 && pos[l][c - 1]) {
-                        inicio = false;
-                    }
-                    if (inicio) {
-                        grupos++;
-                    }
-                }
-            }
-        }
-
-        if (grupos > 1) {
-            System.out.println("INVÁLIDO (múltiplos navios do mesmo tipo)");
-            return false;
-        }
-
-        // 4) verificar se forma linha ou coluna contínua
+        // 3) verificar se forma linha ou coluna contínua
         boolean horizontal = false, vertical = false;
 
         for (int l = 0; l < 10; l++) {
@@ -283,8 +259,30 @@ public class batalhaNaval {
             }
         }
 
-        // 5) qualquer coisa que não seja linha OU coluna é sobreposição
-        if (!(horizontal ^ vertical)) {
+        // 4) verificar se forma linha ou coluna contínua
+
+        for (int l = 0; l < 10; l++) {
+            int seq = 0;
+            for (int c = 0; c < 10; c++) {
+                seq = pos[l][c] ? seq + 1 : 0;
+                if (seq == count) {
+                    horizontal = true;
+                }
+            }
+        }
+
+        for (int c = 0; c < 10; c++) {
+            int seq = 0;
+            for (int l = 0; l < 10; l++) {
+                seq = pos[l][c] ? seq + 1 : 0;
+                if (seq == count) {
+                    vertical = true;
+                }
+            }
+        }
+
+// ⚠️ SOBREPOSIÇÃO SÓ SE FOR UM ÚNICO GRUPO E NÃO LINHA NEM COLUNA
+        if (!horizontal && !vertical) {
             System.out.println("INVÁLIDO (sobreposição de navios)");
             return false;
         }
